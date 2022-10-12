@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @RequiredArgsConstructor
-//@Configuration
-public class DbJobConfiguration {
+@Configuration
+public class JobConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -39,7 +39,6 @@ public class DbJobConfiguration {
                 })
                 .build();
     }
-
     @Bean
     public Step step2() {
         return stepBuilderFactory.get("step2")
@@ -52,4 +51,5 @@ public class DbJobConfiguration {
                 })
                 .build();
     }
+
 }
