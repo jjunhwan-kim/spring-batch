@@ -12,22 +12,19 @@ import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteExcep
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.boot.autoconfigure.batch.BasicBatchConfigurer;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 
 @RequiredArgsConstructor
-@RestController
+//@RestController
 public class JobLauncherController {
 
     private final Job job;
     private final JobLauncher jobLauncher;
     private final BasicBatchConfigurer basicBatchConfigurer;
 
-    @PostMapping("/batch")
-    public String launch(@RequestBody Member member) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+    //@PostMapping("/batch")
+    public String launch(/*@RequestBody*/ Member member) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("id", member.getId())
