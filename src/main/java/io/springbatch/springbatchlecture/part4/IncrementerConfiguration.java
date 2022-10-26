@@ -5,12 +5,14 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @RequiredArgsConstructor
-//@Configuration
-public class PreventRestartConfiguration {
+@Configuration
+public class IncrementerConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -20,7 +22,8 @@ public class PreventRestartConfiguration {
         return jobBuilderFactory.get("batchJob")
                 .start(step1())
                 .next(step2())
-                .preventRestart()
+                //.incrementer(new CustomJobParametersIncrementer())
+                .incrementer(new RunIdIncrementer())
                 .build();
     }
 
@@ -38,9 +41,8 @@ public class PreventRestartConfiguration {
     public Step step2() {
         return stepBuilderFactory.get("step2")
                 .tasklet((contribution, chunkContext) -> {
-                    throw new RuntimeException("step2 was failed");
-                    //System.out.println("step2 has executed");
-                    //return RepeatStatus.FINISHED;
+                    System.out.println("step2 has executed");
+                    return RepeatStatus.FINISHED;
                 })
                 .build();
     }
