@@ -8,10 +8,11 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @RequiredArgsConstructor
-//@Configuration
-public class IncrementerConfiguration {
+@Configuration
+public class SimpleJobArchitectureConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -21,7 +22,6 @@ public class IncrementerConfiguration {
         return jobBuilderFactory.get("batchJob")
                 .start(step1())
                 .next(step2())
-                //.incrementer(new CustomJobParametersIncrementer())
                 .incrementer(new RunIdIncrementer())
                 .build();
     }
