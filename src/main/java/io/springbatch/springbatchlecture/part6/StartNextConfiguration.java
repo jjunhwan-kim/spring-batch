@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class StartNextConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
