@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 
 
 @RequiredArgsConstructor
-//@Configuration
-public class FlowJobArchitectureConfiguration {
+@Configuration
+public class SimpleFlowConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -24,20 +24,19 @@ public class FlowJobArchitectureConfiguration {
         return jobBuilderFactory.get("batchJob")
                 .start(flow())
                 .next(step3())
-                .end()
+                .end() // SimpleFlow 객체 생성
                 .build();
     }
 
     @Bean
     public Flow flow() {
+        FlowBuilder<Flow> builder = new FlowBuilder<>("flow");
 
-        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
-
-        flowBuilder.start(step1())
+        builder.start(step1())
                 .next(step2())
                 .end();
 
-        return flowBuilder.build();
+        return builder.build(); // SimpleFlow 객체 생성
     }
 
     @Bean
