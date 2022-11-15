@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class JobScopeStepScopeArchitectureConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
