@@ -5,18 +5,19 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RequiredArgsConstructor
-//@Configuration
-public class ItemReaderProcessorWriterConfiguration {
+@Configuration
+public class ItemStreamConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -32,30 +33,27 @@ public class ItemReaderProcessorWriterConfiguration {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<Customer, Customer>chunk(3)
+                .<String, String>chunk(5)
                 .reader(itemReader())
-                .processor(itemProcessor())
                 .writer(itemWriter())
                 .build();
     }
 
     @Bean
-    public ItemReader<? extends Customer> itemReader() {
-        return new CustomItemReader(Arrays.asList(
-                new Customer("user1"),
-                new Customer("user2"),
-                new Customer("user3")));
+    public ItemReader<String> itemReader() {
+        List<String> items = new ArrayList<>(10);
+
+        for (int i = 1; i <= 10; i++) {
+            items.add(String.valueOf(i));
+        }
+
+        return new CustomItemStreamReader(items);
     }
 
-    @Bean
-    public ItemProcessor<? super Customer, ? extends Customer> itemProcessor() {
-        return new CustomItemProcessor();
+    private ItemWriter<? super String> itemWriter() {
+        return new CustomItemStreamWriter();
     }
 
-    @Bean
-    public ItemWriter<? super Customer> itemWriter() {
-        return new CustomItemWriter();
-    }
 
     @Bean
     public Step step2() {
