@@ -1,15 +1,11 @@
 package io.springbatch.springbatchlecture.part8;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.Data;
 
-@ToString
-@Getter
-@RequiredArgsConstructor
+@Data
 public class Customer {
 
-    private final String name;
-    private final int age;
-    private final String year;
+    private String name;
+    private int age;
+    private String year;
 }
