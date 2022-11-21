@@ -1,4 +1,4 @@
-package io.springbatch.springbatchlecture.part7;
+package io.springbatch.springbatchlecture.part8;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -7,16 +7,18 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
-import java.util.ArrayList;
 import java.util.List;
 
-
 @RequiredArgsConstructor
-//@Configuration
-public class ItemStreamConfiguration {
+@Configuration
+public class FlatFilesConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -32,35 +34,39 @@ public class ItemStreamConfiguration {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<String, String>chunk(5)
+                .chunk(5)
                 .reader(itemReader())
-                .writer(itemWriter())
+                .writer(new ItemWriter<Object>() {
+                    @Override
+                    public void write(List<?> items) throws Exception {
+                        System.out.println("items" + items);
+                    }
+                })
                 .build();
     }
 
     @Bean
-    public ItemReader<String> itemReader() {
-        List<String> items = new ArrayList<>(10);
-
-        for (int i = 1; i <= 10; i++) {
-            items.add(String.valueOf(i));
-        }
-
-        return new CustomItemStreamReader(items);
-    }
-
-    private ItemWriter<? super String> itemWriter() {
-        return new CustomItemStreamWriter();
-    }
-
-
-    @Bean
     public Step step2() {
-        return stepBuilderFactory.get("step2 ")
+        return stepBuilderFactory.get("step2")
                 .tasklet((contribution, chunkContext) -> {
                     System.out.println("step2 has executed");
                     return RepeatStatus.FINISHED;
                 })
                 .build();
+    }
+
+    @Bean
+    public ItemReader<Customer> itemReader() {
+        FlatFileItemReader<Customer> itemReader = new FlatFileItemReader<>();
+        itemReader.setResource(new ClassPathResource("/customer.csv"));
+
+        DefaultLineMapper<Customer> lineMapper = new DefaultLineMapper<>();
+        lineMapper.setLineTokenizer(new DelimitedLineTokenizer());
+        lineMapper.setFieldSetMapper(new CustomerFieldSetMapper());
+
+        itemReader.setLineMapper(lineMapper);
+        itemReader.setLinesToSkip(1);
+
+        return itemReader;
     }
 }
