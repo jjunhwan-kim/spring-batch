@@ -18,7 +18,7 @@ import org.springframework.core.io.FileSystemResource;
 import java.util.List;
 
 @RequiredArgsConstructor
-@Configuration
+//@Configuration
 public class ExceptionHandlingConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
