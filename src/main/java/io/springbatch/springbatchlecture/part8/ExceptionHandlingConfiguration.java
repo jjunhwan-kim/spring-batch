@@ -12,13 +12,14 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.transform.Range;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-//@Configuration
-public class FixedLengthTokenizerConfiguration {
+@Configuration
+public class ExceptionHandlingConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -64,9 +65,10 @@ public class FixedLengthTokenizerConfiguration {
                 .targetType(Customer.class)
                 .linesToSkip(1)
                 .fixedLength()
+                .strict(false)
                 .addColumns(new Range(1, 5))
                 .addColumns(new Range(6, 9))
-                .addColumns(new Range(10, 11))
+                .addColumns(new Range(10, 14))
                 .names("name", "year", "age")
                 .build();
     }
