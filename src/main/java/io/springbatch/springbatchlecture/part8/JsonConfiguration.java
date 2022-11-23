@@ -1,6 +1,5 @@
 package io.springbatch.springbatchlecture.part8;
 
-import com.thoughtworks.xstream.XStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -9,18 +8,15 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
+import org.springframework.batch.item.json.JacksonJsonObjectReader;
+import org.springframework.batch.item.json.builder.JsonItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.oxm.Unmarshaller;
-import org.springframework.oxm.xstream.XStreamMarshaller;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RequiredArgsConstructor
-//@Configuration
-public class XmlConfiguration {
+@Configuration
+public class JsonConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -43,33 +39,13 @@ public class XmlConfiguration {
     }
 
     @Bean
+
     public ItemReader<? extends XmlCustomer> customItemReader() {
-        return new StaxEventItemReaderBuilder<XmlCustomer>()
-                .name("staxXml")
-                .resource(new ClassPathResource("/customer.xml"))
-                .addFragmentRootElements("customer")
-                .unmarshaller(itemUnmarshaller())
+        return new JsonItemReaderBuilder<XmlCustomer>()
+                .name("jsonReader")
+                .resource(new ClassPathResource("/customer.json"))
+                .jsonObjectReader(new JacksonJsonObjectReader<>(XmlCustomer.class))
                 .build();
-    }
-
-    private Unmarshaller itemUnmarshaller() {
-
-        Map<String, Class<?>> aliases = new HashMap<>();
-        aliases.put("customer", XmlCustomer.class);
-        aliases.put("id", Long.class);
-        aliases.put("name", String.class);
-        aliases.put("age", Integer.class);
-
-        XStreamMarshaller xStreamMarshaller = new XStreamMarshaller();
-        XStream xStream = xStreamMarshaller.getXStream();
-        xStream.alias("customer", XmlCustomer.class);
-        xStream.allowTypes(new Class[]{
-                XmlCustomer.class
-        });
-
-        xStreamMarshaller.setAliases(aliases);
-
-        return xStreamMarshaller;
     }
 
 
